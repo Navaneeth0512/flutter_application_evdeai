@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_evdeai/Applications/Pages/starthetrip.dart';
 
 void main() {
   runApp(MyApp());
@@ -90,28 +89,28 @@ class _RoutePageState extends State<RoutePage> {
                   status: 'On time',
                   isCurrent: true,
                   showDashedLine: true,
+                  showBusIcon: true, // Show bus icon for Kochi hub
                 ),
                 RouteTile(
                   time: '07:30 PM',
                   location: 'Alappuzha',
                   status: 'On time',
-                  isCurrent: true,
+                  isCurrent: false,
                   showDashedLine: true,
                 ),
                 RouteTile(
                   time: '08:30 PM',
                   location: 'Kollam',
                   status: '10min delay',
-                  isCurrent: true,
+                  isCurrent: false,
                   showDashedLine: true,
                 ),
                 RouteTile(
                   time: '09:30 PM',
                   location: 'Kottayam',
                   status: '',
-                  isCurrent: true,
+                  isCurrent: false,
                   showDashedLine: true,
-                  showBusIcon: true,
                 ),
                 RouteTile(
                   time: '10:30 PM',
@@ -136,7 +135,7 @@ class _RoutePageState extends State<RoutePage> {
   }
 }
 
-class RouteTile extends StatelessWidget {
+class RouteTile extends StatefulWidget {
   final String time;
   final String location;
   final String status;
@@ -155,6 +154,43 @@ class RouteTile extends StatelessWidget {
   });
 
   @override
+  _RouteTileState createState() => _RouteTileState();
+}
+
+class _RouteTileState extends State<RouteTile>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+  bool _isCurrent = false; // Initialize directly
+
+  @override
+  void initState() {
+    super.initState();
+    _isCurrent = widget.isCurrent; // Set the value from the widget property
+    _controller = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    )..repeat(reverse: true); // Repeat the animation
+
+    _animation = Tween<double>(begin: 0, end: 1).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    ))
+      ..addListener(() {
+        setState(() {
+          // Update the local isCurrent status based on the animation value
+          _isCurrent = _animation.value >= 0.5;
+        });
+      });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -163,7 +199,7 @@ class RouteTile extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(right: 16.0),
           child: Text(
-            time,
+            widget.time,
             style: const TextStyle(
               color: Colors.black,
               fontWeight: FontWeight.bold,
@@ -174,18 +210,33 @@ class RouteTile extends StatelessWidget {
         // Timeline and Dotted Line
         Column(
           children: [
+            // Bus Icon positioned above the timeline point
+            if (widget.showBusIcon)
+              AnimatedBuilder(
+                animation: _animation,
+                builder: (context, child) {
+                  return Transform.translate(
+                    offset: Offset(0, 600 * _animation.value), // Move down
+                    child: const Padding(
+                      padding: EdgeInsets.only(bottom: 4.0),
+                      child: Icon(Icons.directions_bus,
+                          color: Colors.purple, size: 20),
+                    ),
+                  );
+                },
+              ),
             Container(
               width: 16,
               height: 16,
               decoration: BoxDecoration(
-                color: isCurrent ? Colors.purple : Colors.grey,
+                color: _isCurrent ? Colors.purple : Colors.grey,
                 shape: BoxShape.circle,
-                border: isCurrent
+                border: _isCurrent
                     ? Border.all(color: Colors.white, width: 2)
                     : null,
               ),
             ),
-            if (showDashedLine)
+            if (widget.showDashedLine)
               Container(
                 width: 2,
                 height: 80, // Adjust height as needed for spacing
@@ -208,30 +259,22 @@ class RouteTile extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Location and Bus Icon
-              Row(
-                children: [
-                  if (showBusIcon)
-                    const Padding(
-                      padding: EdgeInsets.only(right: 8.0),
-                      child: Icon(Icons.directions_bus,
-                          color: Colors.purple, size: 18),
-                    ),
-                  Text(
-                    location,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
+              // Location
+              Text(
+                widget.location,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
               // Status on the right side
-              if (status.isNotEmpty)
+              if (widget.status.isNotEmpty)
                 Text(
-                  status,
+                  widget.status,
                   style: TextStyle(
-                    color: status.contains('delay') ? Colors.red : Colors.green,
+                    color: widget.status.contains('delay')
+                        ? Colors.red
+                        : Colors.green,
                     fontSize: 14,
                   ),
                 ),
