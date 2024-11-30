@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_evdeai/Applications/Pages/routepage.dart';
+import 'package:flutter_application_evdeai/Applications/Pages/timeschedule.dart';
 import 'package:flutter_application_evdeai/Applications/Widgets/custom_elevated_button.dart';
 
 class MyApp extends StatelessWidget {
@@ -97,7 +99,12 @@ class Starthetrip extends StatelessWidget {
                     children: [
                       Expanded(
                         child: CustomElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Timeschedule()));
+                          },
                           text: 'Time Schedule',
                           width: null, // Remove infinity width
                         ),
@@ -105,7 +112,12 @@ class Starthetrip extends StatelessWidget {
                       const SizedBox(width: 16),
                       Expanded(
                         child: CustomElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => RoutePage()));
+                          },
                           text: 'Your Route',
                           width: null, // Remove infinity width
                         ),

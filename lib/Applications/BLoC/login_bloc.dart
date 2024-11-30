@@ -19,7 +19,11 @@ class LoginInitial extends LoginState {}
 
 class LoginLoading extends LoginState {}
 
-class LoginSuccess extends LoginState {}
+class LoginSuccess extends LoginState {
+  final bool hasBusDetails;
+
+  LoginSuccess(this.hasBusDetails);
+}
 
 class LoginFailure extends LoginState {
   final String error;
@@ -53,8 +57,17 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             .get();
 
         if (userDoc.exists) {
-          // User exists in Firestore, emit success state
-          emit(LoginSuccess());
+          // User exists in Firestore, now check for bus details
+          QuerySnapshot busDetailsSnapshot = await FirebaseFirestore.instance
+              .collection('BusData')
+              .doc(event.email) // Use email as document ID
+              .collection('BusDetails') // Assuming you have a sub-collection
+              .get();
+
+          bool hasBusDetails = busDetailsSnapshot.docs.isNotEmpty;
+
+          // Emit success state with bus details information
+          emit(LoginSuccess(hasBusDetails));
         } else {
           // User does not exist in Firestore
           emit(LoginFailure('User  not found in the database.'));

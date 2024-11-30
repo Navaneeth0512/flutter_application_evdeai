@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_application_evdeai/Applications/BLoC/login_bloc.dart';
@@ -44,48 +42,20 @@ class _LoginWithEmailPageState extends State<LoginWithEmailPage> {
           ),
         ),
         body: BlocListener<LoginBloc, LoginState>(
-          listener: (context, state) async {
+          listener: (context, state) {
             if (state is LoginSuccess) {
-              User? user = FirebaseAuth.instance.currentUser;
-              if (user != null) {
-                try {
-                  // Fetch bus details from Firestore
-                  QuerySnapshot busDetailsSnapshot = await FirebaseFirestore
-                      .instance
-                      .collection('BusData')
-                      .doc(user.email) // Use email as document ID
-                      .collection(
-                          'BusDetails') // Assuming you have a sub-collection
-                      .get();
-
-                  // Debugging: Print the snapshot data
-                  print(
-                      'Bus Details Snapshot: ${busDetailsSnapshot.docs.length} documents found.');
-
-                  if (busDetailsSnapshot.docs.isNotEmpty) {
-                    // User has bus details, navigate to BusDetails page
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => BusDetails()),
-                    );
-                  } else {
-                    // No bus details, navigate to BusOperatorHome
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => BusOperatorHome()),
-                    );
-                  }
-                } catch (e) {
-                  // Handle any errors that occur during Firestore access
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Error retrieving bus details: $e')),
-                  );
-                }
+              // Navigate based on whether the user has bus details
+              if (state.hasBusDetails) {
+                // User has bus details, navigate to BusDetails page
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => BusDetails()),
+                );
               } else {
-                // Handle case where user is null
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('User  is not authenticated.')),
+                // No bus details, navigate to BusOperatorHome
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => BusOperatorHome()),
                 );
               }
             } else if (state is LoginFailure) {
