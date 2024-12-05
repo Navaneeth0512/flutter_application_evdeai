@@ -3,17 +3,18 @@ import 'event.dart';
 import 'state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
-  LoginBloc() : super(LoginInitial()) {
-    on<SubmitPhoneNumberEvent>((event, emit) async {
-      emit(PhoneNumberSubmitting());
+  LoginBloc() : super(LoginInitialState());
 
+  Stream<LoginState> mapEventToState(LoginEvent event) async* {
+    if (event is SubmitPhoneNumberEvent) {
+      yield PhoneNumberSubmitting();
       try {
-        // Simulate an async operation (e.g., OTP sending)
+        // Simulate OTP sending logic
         await Future.delayed(const Duration(seconds: 2));
-        emit(PhoneNumberSubmitted());
+        yield PhoneNumberSubmitted();
       } catch (e) {
-        emit(LoginError("Failed to send OTP. Please try again."));
+        yield LoginError(error: "Failed to send OTP.");
       }
-    });
+    }
   }
 }

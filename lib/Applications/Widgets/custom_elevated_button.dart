@@ -10,6 +10,7 @@ class CustomElevatedButton extends StatelessWidget {
     required this.onPressed,
     required this.text,
     this.width,
+    required Null Function() onTap,
   }) : super(key: key);
 
   @override

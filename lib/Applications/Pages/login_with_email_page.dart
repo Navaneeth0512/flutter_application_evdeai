@@ -46,20 +46,18 @@ class _LoginWithEmailPageState extends State<LoginWithEmailPage> {
             if (state is LoginSuccess) {
               // Navigate based on whether the user has bus details
               if (state.hasBusDetails) {
-                // User has bus details, navigate to BusDetails page
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => BusDetails()),
                 );
               } else {
-                // No bus details, navigate to BusOperatorHome
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => BusOperatorHome()),
                 );
               }
             } else if (state is LoginFailure) {
-              // Show the error message from the LoginFailure state
+              // Show error message on failure
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text(state.error)),
               );
@@ -72,9 +70,10 @@ class _LoginWithEmailPageState extends State<LoginWithEmailPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Login with Email',
-                      style:
-                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                  const Text(
+                    'Login with Email',
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
                   const SizedBox(height: 30),
                   CustomTextFormField(
                     controller: _emailController,
@@ -88,11 +87,18 @@ class _LoginWithEmailPageState extends State<LoginWithEmailPage> {
                       }
                       return null;
                     },
+                    onChanged: (value) {},
+                    prefixIcon: Icons.abc,
+                    onTap: () {},
+                    hinttext: '',
+                    obscureText: true,
+                    keyboardType: TextInputType.emailAddress,
                   ),
                   const SizedBox(height: 30),
                   CustomTextFormField(
                     controller: _passwordController,
                     labelText: 'Password',
+                    keyboardType: TextInputType.visiblePassword,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your password';
@@ -103,6 +109,10 @@ class _LoginWithEmailPageState extends State<LoginWithEmailPage> {
                       return null;
                     },
                     obscureText: true,
+                    onChanged: (value) {},
+                    prefixIcon: Icons.password,
+                    onTap: () {},
+                    hinttext: 'Enter Your Password',
                   ),
                   const SizedBox(height: 30),
                   BlocBuilder<LoginBloc, LoginState>(
@@ -124,11 +134,12 @@ class _LoginWithEmailPageState extends State<LoginWithEmailPage> {
                                 },
                           text: state is LoginLoading ? "Loading..." : "Login",
                           width: null,
+                          onTap: () {},
                         ),
                       );
                     },
                   ),
-                  const SizedBox(height: 20), // Added spacing
+                  const SizedBox(height: 20),
                   Center(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -150,7 +161,7 @@ class _LoginWithEmailPageState extends State<LoginWithEmailPage> {
                               decoration: TextDecoration.underline,
                             ),
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ),

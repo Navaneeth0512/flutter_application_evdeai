@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_application_evdeai/Applications/BLoC/registration_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
+import 'package:flutter_application_evdeai/Applications/BLoC/registration_bloc.dart';
 import 'package:flutter_application_evdeai/Applications/Pages/busoperatorhome.dart';
 import 'package:flutter_application_evdeai/Applications/Widgets/custom_elevated_button.dart';
 import 'package:flutter_application_evdeai/Applications/Widgets/custom_text_form_field.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
 
 class RegisterWithEmailPage extends StatefulWidget {
   @override
@@ -20,6 +20,9 @@ class _RegisterWithEmailPageState extends State<RegisterWithEmailPage> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
 
+  bool _isPasswordVisible = false;
+  bool _isConfirmPasswordVisible = false;
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -27,6 +30,11 @@ class _RegisterWithEmailPageState extends State<RegisterWithEmailPage> {
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
+  }
+
+  // Function to sanitize email to make it a valid Firestore collection name
+  String sanitizeEmail(String email) {
+    return email.replaceAll('.', '_').replaceAll('@', '_at_');
   }
 
   @override
@@ -46,7 +54,9 @@ class _RegisterWithEmailPageState extends State<RegisterWithEmailPage> {
         ),
         body: BlocListener<RegistrationBloc, RegistrationState>(
           listener: (context, state) {
+            print("Current state: $state"); // Debugging line
             if (state is RegistrationSuccess) {
+              print("Registration Successful!"); // Debugging line
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => BusOperatorHome()),
@@ -87,6 +97,12 @@ class _RegisterWithEmailPageState extends State<RegisterWithEmailPage> {
                           }
                           return null;
                         },
+                        onChanged: (value) {},
+                        prefixIcon: Icons.email,
+                        onTap: () {},
+                        hinttext: '',
+                        obscureText: false,
+                        keyboardType: TextInputType.emailAddress,
                       ),
                       const SizedBox(height: 30),
                       CustomTextFormField(
@@ -101,6 +117,12 @@ class _RegisterWithEmailPageState extends State<RegisterWithEmailPage> {
                           }
                           return null;
                         },
+                        onChanged: (value) {},
+                        prefixIcon: Icons.phone,
+                        onTap: () {},
+                        hinttext: '',
+                        obscureText: false,
+                        keyboardType: TextInputType.number,
                       ),
                       const SizedBox(height: 30),
                       CustomTextFormField(
@@ -115,7 +137,12 @@ class _RegisterWithEmailPageState extends State<RegisterWithEmailPage> {
                           }
                           return null;
                         },
-                        obscureText: true,
+                        obscureText: !_isPasswordVisible,
+                        onChanged: (value) {},
+                        prefixIcon: Icons.password,
+                        onTap: () {},
+                        hinttext: '',
+                        keyboardType: TextInputType.text,
                       ),
                       const SizedBox(height: 30),
                       CustomTextFormField(
@@ -130,7 +157,12 @@ class _RegisterWithEmailPageState extends State<RegisterWithEmailPage> {
                           }
                           return null;
                         },
-                        obscureText: true,
+                        obscureText: !_isConfirmPasswordVisible,
+                        onChanged: (value) {},
+                        prefixIcon: Icons.password,
+                        onTap: () {},
+                        hinttext: '',
+                        keyboardType: TextInputType.visiblePassword,
                       ),
                       const SizedBox(height: 30),
                       BlocBuilder<RegistrationBloc, RegistrationState>(
@@ -142,9 +174,9 @@ class _RegisterWithEmailPageState extends State<RegisterWithEmailPage> {
                                   : () async {
                                       if (_formKey.currentState?.validate() ==
                                           true) {
-                                        // Form is valid, handle the registration logic here
+                                        print("Form validation successful.");
                                         try {
-                                          // Create user with email and password
+                                          // Firebase Authentication
                                           UserCredential userCredential =
                                               await FirebaseAuth.instance
                                                   .createUserWithEmailAndPassword(
@@ -152,19 +184,27 @@ class _RegisterWithEmailPageState extends State<RegisterWithEmailPage> {
                                             password: _passwordController.text,
                                           );
 
-                                          // Save additional user information in Firestore
+                                          print(
+                                              "User UID: ${userCredential.user?.uid}");
+
+                                          // Firestore Data Storage
+                                          String sanitizedEmail = sanitizeEmail(
+                                              _emailController.text);
+
                                           await FirebaseFirestore.instance
-                                              .collection(
-                                                  'BusOperatorsLogin') // Changed collection name
-                                              .doc(_emailController
-                                                  .text) // Use email as document ID
+                                              .collection('BusOperatorsLogin')
+                                              .doc('BusOperatorEmail')
+                                              .collection(sanitizedEmail)
+                                              .doc('UserCredential')
                                               .set({
-                                            'email': _emailController.text,
-                                            'phone': _phoneController.text,
-                                            // Add any additional driver details here
+                                            'Email': _emailController.text,
+                                            'Created At':
+                                                FieldValue.serverTimestamp(),
                                           });
 
-                                          // Dispatch success event
+                                          print(
+                                              "User data stored successfully in Firestore.");
+
                                           context
                                               .read<RegistrationBloc>()
                                               .add(SubmitRegistrationEvent(
@@ -173,6 +213,8 @@ class _RegisterWithEmailPageState extends State<RegisterWithEmailPage> {
                                                 _passwordController.text,
                                               ));
                                         } catch (e) {
+                                          print(
+                                              "Error during registration: $e");
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(
                                             SnackBar(
@@ -184,7 +226,8 @@ class _RegisterWithEmailPageState extends State<RegisterWithEmailPage> {
                               text: state is RegistrationLoading
                                   ? "Loading..."
                                   : "Register",
-                              width: null, // Remove infinity width
+                              width: null,
+                              onTap: () {},
                             ),
                           );
                         },

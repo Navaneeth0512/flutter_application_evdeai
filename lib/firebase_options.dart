@@ -32,51 +32,54 @@ class DefaultFirebaseOptions {
     }
   }
 
-  // Firebase options for web
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBU50GSNDGLb8Zx0dfJAM2w6pV_u0QlYq8',
-    appId: '1:317322974979:web:5f8c9c497841fd3ee77b36',
-    messagingSenderId: '317322974979',
-    projectId: 'evdeai-564ce',
-    authDomain: 'evdeai-564ce.firebaseapp.com',
-    storageBucket: 'evdeai-564ce.firebasestorage.app',
-    measurementId: 'G-B6KKQZGVSH',
+    apiKey: 'AIzaSyD4LJrBxdTSxsGvgDBvZwaUGAPnFVDZQOA',
+    appId: '1:478869573918:web:431013ade0d3aa3c4ef90f',
+    messagingSenderId: '478869573918',
+    projectId: 'evde-ai',
+    authDomain: 'evde-ai.firebaseapp.com',
+    storageBucket: 'evde-ai.appspot.com',
+    measurementId: 'G-94T782M7FG',
+  );
+
+  // Firebase options for web
+
+  static const FirebaseOptions android = FirebaseOptions(
+    apiKey: 'AIzaSyBgFKxSVM6Rb6Di_PD6cApj37a1b_Sa0CE',
+    appId: '1:478869573918:android:9be03319b303b7e74ef90f',
+    messagingSenderId: '478869573918',
+    projectId: 'evde-ai',
+    storageBucket: 'evde-ai.appspot.com',
   );
 
   // Firebase options for Android
-  static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBtHmC5safEOBkU0k-DauCyx3srrHA2rVY',
-    appId: '1:317322974979:android:4d29179de49277d7e77b36',
-    messagingSenderId: '317322974979',
-    projectId: 'evdeai-564ce',
-    storageBucket: 'evdeai-564ce.firebasestorage.app',
-  );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCd9zWYwQGdJGPMn2_Q-VCW-WLrgJhXIZM',
-    appId: '1:317322974979:ios:f929f7dca9f51f3de77b36',
-    messagingSenderId: '317322974979',
-    projectId: 'evdeai-564ce',
-    storageBucket: 'evdeai-564ce.firebasestorage.app',
+    apiKey: 'AIzaSyBLOUaj8etx87DY6EdSofSSHGJm-P_NgmY',
+    appId: '1:478869573918:ios:dfbe477b1c42c4804ef90f',
+    messagingSenderId: '478869573918',
+    projectId: 'evde-ai',
+    storageBucket: 'evde-ai.appspot.com',
     iosBundleId: 'com.example.flutterApplicationEvdeai',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyCd9zWYwQGdJGPMn2_Q-VCW-WLrgJhXIZM',
-    appId: '1:317322974979:ios:f929f7dca9f51f3de77b36',
-    messagingSenderId: '317322974979',
-    projectId: 'evdeai-564ce',
-    storageBucket: 'evdeai-564ce.firebasestorage.app',
+    apiKey: 'AIzaSyBLOUaj8etx87DY6EdSofSSHGJm-P_NgmY',
+    appId: '1:478869573918:ios:dfbe477b1c42c4804ef90f',
+    messagingSenderId: '478869573918',
+    projectId: 'evde-ai',
+    storageBucket: 'evde-ai.appspot.com',
     iosBundleId: 'com.example.flutterApplicationEvdeai',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyBU50GSNDGLb8Zx0dfJAM2w6pV_u0QlYq8',
-    appId: '1:317322974979:web:6d245b18ff10bbcce77b36',
-    messagingSenderId: '317322974979',
-    projectId: 'evdeai-564ce',
-    authDomain: 'evdeai-564ce.firebaseapp.com',
-    storageBucket: 'evdeai-564ce.firebasestorage.app',
-    measurementId: 'G-S75LTTP676',
+    apiKey: 'AIzaSyD4LJrBxdTSxsGvgDBvZwaUGAPnFVDZQOA',
+    appId: '1:478869573918:web:431013ade0d3aa3c4ef90f',
+    messagingSenderId: '478869573918',
+    projectId: 'evde-ai',
+    authDomain: 'evde-ai.firebaseapp.com',
+    storageBucket: 'evde-ai.appspot.com',
+    measurementId: 'G-94T782M7FG',
   );
+
 }

@@ -175,7 +175,7 @@ class _OtpScreenState extends State<OtpScreen> {
                   CustomElevatedButton(
                     onPressed: isSubmittingOtp ? null : onSubmitOtp,
                     text: isSubmittingOtp ? "Loading..." : "Continue",
-                    width: null, // Remove infinity width
+                    width: null, onTap: () {}, // Remove infinity width
                   ),
                   const SizedBox(height: 20),
                   Row(

@@ -19,8 +19,40 @@ class RoutePage extends StatefulWidget {
   _RoutePageState createState() => _RoutePageState();
 }
 
-class _RoutePageState extends State<RoutePage> {
+class _RoutePageState extends State<RoutePage>
+    with SingleTickerProviderStateMixin {
   String dropdownValue = 'Today';
+  late AnimationController _controller;
+  late Animation<double> _animation;
+  final int totalStops = 6; // Total number of stops
+  int currentStop = 0; // Index of the current stop
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 15), // Duration for the animation
+      vsync: this,
+    )..addListener(() {
+        setState(() {
+          // Dynamically calculate the current stop based on animation value
+          currentStop = (_animation.value * totalStops).round();
+        });
+      });
+
+    _animation = Tween<double>(begin: 0, end: 1).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.linear,
+    ));
+
+    _controller.repeat(); // Start animation
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,60 +106,32 @@ class _RoutePageState extends State<RoutePage> {
           Expanded(
             child: Stack(
               children: [
-                // The ListView with RouteTile widgets
-                ListView(
+                ListView.builder(
                   padding:
-                      const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-                  children: const [
-                    RouteTile(
-                      time: '06:30 PM',
-                      location: 'Kochi hub',
-                      status: 'On time',
-                      isCurrent: true,
-                      showDashedLine: true,
-                    ),
-                    RouteTile(
-                      time: '07:30 PM',
-                      location: 'Alappuzha',
-                      status: 'On time',
-                      isCurrent: false,
-                      showDashedLine: true,
-                    ),
-                    RouteTile(
-                      time: '08:30 PM',
-                      location: 'Kollam',
-                      status: '10min delay',
-                      isCurrent: false,
-                      showDashedLine: true,
-                    ),
-                    RouteTile(
-                      time: '09:30 PM',
-                      location: 'Kottayam',
-                      status: '',
-                      isCurrent: false,
-                      showDashedLine: true,
-                    ),
-                    RouteTile(
-                      time: '10:30 PM',
-                      location: 'Pathanamthitta',
-                      status: '',
-                      isCurrent: false,
-                      showDashedLine: true,
-                    ),
-                    RouteTile(
-                      time: '11:30 PM',
-                      location: 'Thiruvananthapuram',
-                      status: '',
-                      isCurrent: false,
-                      showDashedLine: true,
-                    ),
-                  ],
+                      const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                  itemCount: totalStops,
+                  itemBuilder: (context, index) {
+                    return RouteTile(
+                      time: '${6 + index}:30 PM',
+                      location: 'Stop ${index + 1}',
+                      status: index == 2
+                          ? '10min delay'
+                          : (index < currentStop ? 'on Time' : 'On Way'),
+                      isCurrent: index == currentStop,
+                      isVisited: index < currentStop,
+                      showDashedLine: index != totalStops - 1,
+                    );
+                  },
                 ),
-                // Bus icon animation positioned at the top
                 Positioned(
-                  top: 0, // Start from the top
-                  left: MediaQuery.of(context).size.width / 9 - -45,
-                  child: BusIconAnimation(),
+                  top: _animation.value *
+                      (MediaQuery.of(context).size.height - 200), // Dynamic top
+                  left: MediaQuery.of(context).size.width / 8 - -43, // Centered
+                  child: const Icon(
+                    Icons.directions_bus,
+                    color: Colors.purple,
+                    size: 36,
+                  ),
                 ),
               ],
             ),
@@ -143,6 +147,7 @@ class RouteTile extends StatelessWidget {
   final String location;
   final String status;
   final bool isCurrent;
+  final bool isVisited;
   final bool showDashedLine;
 
   const RouteTile({
@@ -151,6 +156,7 @@ class RouteTile extends StatelessWidget {
     required this.location,
     required this.status,
     required this.isCurrent,
+    required this.isVisited,
     this.showDashedLine = true,
   });
 
@@ -160,7 +166,7 @@ class RouteTile extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(right: 16.0),
+          padding: const EdgeInsets.only(right: 15.0),
           child: Text(
             time,
             style: const TextStyle(
@@ -172,24 +178,24 @@ class RouteTile extends StatelessWidget {
         ),
         Stack(
           alignment: Alignment.center,
-          clipBehavior: Clip.none,
           children: [
-            // Dashed line and circle (background elements)
             Column(
               children: [
-                // Circular point
                 Container(
                   width: 16,
                   height: 16,
                   decoration: BoxDecoration(
-                    color: isCurrent ? Colors.purple : Colors.grey,
+                    color: isCurrent
+                        ? Colors.purple
+                        : isVisited
+                            ? Colors.purple[200]
+                            : Colors.grey,
                     shape: BoxShape.circle,
                     border: isCurrent
                         ? Border.all(color: Colors.white, width: 2)
                         : null,
                   ),
                 ),
-                // Dashed line
                 if (showDashedLine)
                   Container(
                     width: 2,
@@ -200,7 +206,7 @@ class RouteTile extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(width: 16),
+        const SizedBox(width: 1),
         Expanded(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -225,56 +231,6 @@ class RouteTile extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class BusIconAnimation extends StatefulWidget {
-  @override
-  _BusIconAnimationState createState() => _BusIconAnimationState();
-}
-
-class _BusIconAnimationState extends State<BusIconAnimation>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration:
-          const Duration(seconds: 5), // Adjust duration for smooth animation
-      vsync: this,
-    )..repeat(reverse: false); // Continuous animation
-
-    _animation = Tween<double>(begin: 0, end: 1).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    ));
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _animation,
-      builder: (context, child) {
-        return Transform.translate(
-          offset:
-              Offset(0, MediaQuery.of(context).size.height * _animation.value),
-          child: const Icon(
-            Icons.directions_bus,
-            color: Colors.purple,
-            size: 36, // Slightly larger for visibility
-          ),
-        );
-      },
     );
   }
 }

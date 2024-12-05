@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_evdeai/Applications/Pages/starthetrip.dart';
+import 'package:flutter_application_evdeai/Applications/Pages/startthetrip/starthetrip.dart';
 
 void main() {
   runApp(MyApp());
@@ -32,7 +32,7 @@ class _TimescheduleState extends State<Timeschedule> {
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => Starthetrip()));
+                  MaterialPageRoute(builder: (context) => StartTheTrip()));
             },
           ),
         ),

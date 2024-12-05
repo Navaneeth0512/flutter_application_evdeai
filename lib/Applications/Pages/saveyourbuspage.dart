@@ -4,16 +4,10 @@ import 'package:flutter_application_evdeai/Applications/Pages/busoperatorhome.da
 import 'package:flutter_application_evdeai/Applications/Widgets/custom_text_form_field.dart';
 import 'package:flutter_application_evdeai/Applications/Widgets/custom_elevated_button.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart'; // Import Firebase Auth
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: SaveYourBusPage(),
-    );
-  }
-}
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'googleapi.dart';
 
 class SaveYourBusPage extends StatefulWidget {
   @override
@@ -29,8 +23,80 @@ class _SaveYourBusPageState extends State<SaveYourBusPage> {
   final TextEditingController _endDestinationController =
       TextEditingController();
 
-  // Firestore instance
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  String googleApiKey = GoogleAPI.googleApiKey;
+
+  // Function to save bus data
+  Future<void> _saveBusData() async {
+    if (_formKey.currentState?.validate() == true) {
+      try {
+        final startCoordinates =
+            await _getCoordinates(_startDestinationController.text);
+        final endCoordinates =
+            await _getCoordinates(_endDestinationController.text);
+
+        if (startCoordinates == null || endCoordinates == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: Text('Error: Could not fetch coordinates.')),
+          );
+          return;
+        }
+
+        String userEmail = FirebaseAuth.instance.currentUser?.email ?? '';
+
+        if (userEmail.isNotEmpty) {
+          DocumentReference userDocRef =
+              _firestore.collection('Busdata').doc(userEmail);
+
+          await userDocRef.collection('BusDetails').add({
+            'busRegisterNumber': _busRegisterController.text,
+            'busName': _busNameController.text,
+            'startDestination': _startDestinationController.text,
+            'endDestination': _endDestinationController.text,
+            'startCoordinates': startCoordinates,
+            'endCoordinates': endCoordinates,
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Bus details and route saved!')),
+          );
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => BusDetails(),
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('User not logged in')),
+          );
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error saving bus details: $e')),
+        );
+      }
+    }
+  }
+
+  Future<Map<String, dynamic>?> _getCoordinates(String address) async {
+    final url =
+        'https://maps.googleapis.com/maps/api/geocode/json?address=${Uri.encodeComponent(address)}&key=$googleApiKey';
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['results'] != null && data['results'].isNotEmpty) {
+          return data['results'][0]['geometry']['location'];
+        }
+      }
+    } catch (e) {
+      print('Error fetching coordinates: $e');
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +113,7 @@ class _SaveYourBusPageState extends State<SaveYourBusPage> {
               MaterialPageRoute(
                 builder: (context) => BusOperatorHome(),
               ),
-            ); // Handle back button press
+            );
           },
         ),
       ),
@@ -67,14 +133,6 @@ class _SaveYourBusPageState extends State<SaveYourBusPage> {
                   ),
                 ),
                 const SizedBox(height: 30),
-                const Text(
-                  'Hello user, save your bus to have full access on your bus and enjoy our features.',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.black,
-                  ),
-                ),
-                const SizedBox(height: 30),
                 CustomTextFormField(
                   controller: _busRegisterController,
                   labelText: 'Bus register number',
@@ -84,6 +142,11 @@ class _SaveYourBusPageState extends State<SaveYourBusPage> {
                     }
                     return null;
                   },
+                  prefixIcon: Icons.abc,
+                  obscureText: false,
+                  keyboardType: TextInputType.text,
+                  hinttext: '',
+                  onChanged: (value) {},
                 ),
                 const SizedBox(height: 30),
                 CustomTextFormField(
@@ -95,6 +158,11 @@ class _SaveYourBusPageState extends State<SaveYourBusPage> {
                     }
                     return null;
                   },
+                  prefixIcon: Icons.abc,
+                  obscureText: false,
+                  keyboardType: TextInputType.text,
+                  hinttext: 'Bus Name',
+                  onChanged: (value) {},
                 ),
                 const SizedBox(height: 30),
                 CustomTextFormField(
@@ -106,6 +174,11 @@ class _SaveYourBusPageState extends State<SaveYourBusPage> {
                     }
                     return null;
                   },
+                  prefixIcon: Icons.location_on,
+                  obscureText: false,
+                  keyboardType: TextInputType.text,
+                  hinttext: 'Start Destination',
+                  onChanged: (value) {},
                 ),
                 const SizedBox(height: 30),
                 CustomTextFormField(
@@ -117,52 +190,18 @@ class _SaveYourBusPageState extends State<SaveYourBusPage> {
                     }
                     return null;
                   },
+                  prefixIcon: Icons.location_on,
+                  obscureText: false,
+                  keyboardType: TextInputType.text,
+                  hinttext: 'End Destination',
+                  onChanged: (value) {},
                 ),
                 const SizedBox(height: 30),
                 Center(
                   child: CustomElevatedButton(
-                    onPressed: () async {
-                      if (_formKey.currentState?.validate() == true) {
-                        // Form is valid, save the data to Firestore
-                        try {
-                          // Get the logged-in user's email
-                          String userEmail =
-                              FirebaseAuth.instance.currentUser?.email ?? '';
-
-                          // Create or update the document for the user in BusData collection
-                          DocumentReference userDocRef =
-                              _firestore.collection('BusData').doc(userEmail);
-
-                          // Create a subcollection named BusDetails and add the bus details
-                          await userDocRef.collection('BusDetails').add({
-                            'busRegisterNumber': _busRegisterController.text,
-                            'busName': _busNameController.text,
-                            'startDestination':
-                                _startDestinationController.text,
-                            'endDestination': _endDestinationController.text,
-                          });
-
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Bus details saved!')),
-                          );
-
-                          // Navigate to the next page
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => BusDetails(),
-                            ),
-                          );
-                        } catch (e) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text('Error saving bus details: $e')),
-                          );
-                        }
-                      }
-                    },
-                    text: 'Continue',
-                    width: null, // Remove infinity width
+                    text: 'Save Bus',
+                    onPressed: _saveBusData,
+                    onTap: () {},
                   ),
                 ),
               ],

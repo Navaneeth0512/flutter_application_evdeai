@@ -39,7 +39,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   Future<void> _onSubmitLoginEvent(
       SubmitLoginEvent event, Emitter<LoginState> emit) async {
-    emit(LoginLoading());
+    emit(LoginLoading()); // Emit loading state
+
     try {
       // Attempt to sign in with email and password
       UserCredential userCredential =
@@ -48,20 +49,22 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         password: event.password,
       );
 
-      // Check if the user is signed in
       if (userCredential.user != null) {
-        // Now check Firestore to see if the user exists in BusOperatorsLogin
+        // Check Firestore for user existence in BusOperatorsLogin
         DocumentSnapshot userDoc = await FirebaseFirestore.instance
             .collection('BusOperatorsLogin')
-            .doc(event.email) // Use email as document ID
+            .doc('BusOperatorEmail') // Assuming this is the correct reference
+            .collection(sanitizeEmail(
+                event.email)) // Use sanitized email as collection ID
+            .doc('UserCredential')
             .get();
 
         if (userDoc.exists) {
-          // User exists in Firestore, now check for bus details
+          // Check for bus details
           QuerySnapshot busDetailsSnapshot = await FirebaseFirestore.instance
-              .collection('BusData')
+              .collection('Busdata')
               .doc(event.email) // Use email as document ID
-              .collection('BusDetails') // Assuming you have a sub-collection
+              .collection('BusDetails') // Sub-collection with bus details
               .get();
 
           bool hasBusDetails = busDetailsSnapshot.docs.isNotEmpty;
@@ -70,16 +73,15 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           emit(LoginSuccess(hasBusDetails));
         } else {
           // User does not exist in Firestore
-          emit(LoginFailure('User  not found in the database.'));
+          emit(LoginFailure('User not found in the database.'));
         }
       } else {
         emit(LoginFailure('Login failed. Please try again.'));
       }
     } on FirebaseAuthException catch (e) {
-      // Print the error code for debugging
+      // Handle FirebaseAuthException and emit appropriate error message
       print('FirebaseAuthException caught: ${e.code}');
 
-      // Handle different types of Firebase exceptions
       switch (e.code) {
         case 'user-not-found':
           emit(LoginFailure('No user found for that email.'));
@@ -97,8 +99,13 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           emit(LoginFailure('An unexpected error occurred. Please try again.'));
       }
     } catch (e) {
-      // Catch any other types of exceptions
+      // Catch any other errors
       emit(LoginFailure('An unknown error occurred: ${e.toString()}'));
     }
+  }
+
+  // Function to sanitize email for Firestore collection name
+  String sanitizeEmail(String email) {
+    return email.replaceAll('.', '_').replaceAll('@', '_at_');
   }
 }

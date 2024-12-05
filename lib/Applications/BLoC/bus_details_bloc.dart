@@ -37,7 +37,7 @@ class BusDetailsBloc extends Bloc<BusDetailsEvent, BusDetailsState> {
 
         // Fetch bus details from the user's subcollection 'BusDetails'
         QuerySnapshot snapshot = await FirebaseFirestore.instance
-            .collection('BusData')
+            .collection('Busdata')
             .doc(userEmail)
             .collection('BusDetails')
             .get();
