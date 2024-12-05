@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_application_evdeai/Applications/BLoC/login_bloc.dart';
-import 'package:flutter_application_evdeai/Applications/Pages/bus_details.dart';
-import 'package:flutter_application_evdeai/Applications/Pages/busoperatorhome.dart';
-import 'package:flutter_application_evdeai/Applications/Pages/register_with_email_page.dart';
+import 'package:flutter_application_evdeai/Applications/Pages/loginwithemail/bloc/login_bloc.dart';
+import 'package:flutter_application_evdeai/Applications/Pages/busdetails/bus_details.dart';
+import 'package:flutter_application_evdeai/Applications/Pages/busoperatorhome/busoperatorhome.dart';
+import 'package:flutter_application_evdeai/Applications/Pages/Registerwithemail/register_with_email_page.dart';
 import 'package:flutter_application_evdeai/Applications/Widgets/custom_elevated_button.dart';
 import 'package:flutter_application_evdeai/Applications/Widgets/custom_text_form_field.dart';
 

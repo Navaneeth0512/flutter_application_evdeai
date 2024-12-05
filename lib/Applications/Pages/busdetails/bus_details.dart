@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_evdeai/Applications/BLoC/bus_details_bloc.dart';
-import 'package:flutter_application_evdeai/Applications/Pages/saveyourbuspage.dart';
+import 'package:flutter_application_evdeai/Applications/Pages/busdetails/bloc/bus_details_bloc.dart';
+import 'package:flutter_application_evdeai/Applications/Pages/busdetails/bloc/event.dart';
+import 'package:flutter_application_evdeai/Applications/Pages/busdetails/bloc/state.dart';
+import 'package:flutter_application_evdeai/Applications/Pages/saveyourbus/saveyourbuspage.dart';
 import 'package:flutter_application_evdeai/Applications/Pages/startthetrip/starthetrip.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

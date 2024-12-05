@@ -1,30 +1,8 @@
+import 'package:flutter_application_evdeai/Applications/Pages/busdetails/bloc/event.dart';
+import 'package:flutter_application_evdeai/Applications/Pages/busdetails/bloc/state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
-// Define the BLoC Events
-abstract class BusDetailsEvent {}
-
-class FetchBusDetailsEvent extends BusDetailsEvent {}
-
-// Define the BLoC States
-abstract class BusDetailsState {}
-
-class BusDetailsInitial extends BusDetailsState {}
-
-class BusDetailsLoading extends BusDetailsState {}
-
-class BusDetailsLoaded extends BusDetailsState {
-  final List<Map<String, dynamic>> buses;
-
-  BusDetailsLoaded(this.buses);
-}
-
-class BusDetailsError extends BusDetailsState {
-  final String message;
-
-  BusDetailsError(this.message);
-}
 
 // Define the BLoC
 class BusDetailsBloc extends Bloc<BusDetailsEvent, BusDetailsState> {

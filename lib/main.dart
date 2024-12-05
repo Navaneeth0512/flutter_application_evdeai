@@ -1,6 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_evdeai/Applications/Pages/splash_screen.dart';
+import 'package:flutter_application_evdeai/Applications/Pages/splashscreen/splash_screen.dart';
 import 'package:flutter_application_evdeai/firebase_options.dart';
 
 void main() async {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_evdeai/Applications/Pages/busdriverloginpage.dart';
+import 'package:flutter_application_evdeai/Applications/Pages/busdriverloginpage/busdriverloginpage.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});

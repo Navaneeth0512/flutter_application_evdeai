@@ -1,29 +1,6 @@
+import 'package:flutter_application_evdeai/Applications/Pages/Registerwithemail/bloc/event.dart';
+import 'package:flutter_application_evdeai/Applications/Pages/Registerwithemail/bloc/state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-// BLoC Events
-abstract class RegistrationEvent {}
-
-class SubmitRegistrationEvent extends RegistrationEvent {
-  final String email;
-  final String phone;
-  final String password;
-
-  SubmitRegistrationEvent(this.email, this.phone, this.password);
-}
-
-// BLoC States
-abstract class RegistrationState {}
-
-class RegistrationInitial extends RegistrationState {}
-
-class RegistrationLoading extends RegistrationState {}
-
-class RegistrationSuccess extends RegistrationState {}
-
-class RegistrationFailure extends RegistrationState {
-  final String error;
-  RegistrationFailure(this.error);
-}
 
 // BLoC
 class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {

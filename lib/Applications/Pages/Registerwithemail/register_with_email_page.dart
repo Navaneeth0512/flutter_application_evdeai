@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_application_evdeai/Applications/Pages/Registerwithemail/bloc/event.dart';
+import 'package:flutter_application_evdeai/Applications/Pages/Registerwithemail/bloc/state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
-import 'package:flutter_application_evdeai/Applications/BLoC/registration_bloc.dart';
-import 'package:flutter_application_evdeai/Applications/Pages/busoperatorhome.dart';
+import 'package:flutter_application_evdeai/Applications/Pages/Registerwithemail/bloc/registration_bloc.dart';
+import 'package:flutter_application_evdeai/Applications/Pages/busoperatorhome/busoperatorhome.dart';
 import 'package:flutter_application_evdeai/Applications/Widgets/custom_elevated_button.dart';
 import 'package:flutter_application_evdeai/Applications/Widgets/custom_text_form_field.dart';
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_evdeai/Applications/Pages/bus_details.dart';
+import 'package:flutter_application_evdeai/Applications/Pages/busdetails/bus_details.dart';
 import 'package:flutter_application_evdeai/Applications/Widgets/custom_elevated_button.dart';
 
 class MyApp extends StatelessWidget {

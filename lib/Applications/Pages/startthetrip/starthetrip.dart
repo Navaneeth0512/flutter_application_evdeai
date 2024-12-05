@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_evdeai/Applications/Pages/Sharebuspage';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_application_evdeai/Applications/Pages/routepage.dart';
-import 'package:flutter_application_evdeai/Applications/Pages/timeschedule.dart';
+import 'package:flutter_application_evdeai/Applications/Pages/routepage/routepage.dart';
+import 'package:flutter_application_evdeai/Applications/Pages/timeschedulepage/timeschedule.dart';
 import 'package:flutter_application_evdeai/Applications/Widgets/custom_elevated_button.dart';
 import 'start_trip_bloc.dart'; // Import your BLoC here
 

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_evdeai/Applications/Pages/bus_details.dart';
-import 'package:flutter_application_evdeai/Applications/Pages/busoperatorhome.dart';
+import 'package:flutter_application_evdeai/Applications/Pages/busdetails/bus_details.dart';
+import 'package:flutter_application_evdeai/Applications/Pages/busoperatorhome/busoperatorhome.dart';
 import 'package:flutter_application_evdeai/Applications/Widgets/custom_text_form_field.dart';
 import 'package:flutter_application_evdeai/Applications/Widgets/custom_elevated_button.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'googleapi.dart';
+import '../googleapi.dart';
 
 class SaveYourBusPage extends StatefulWidget {
   @override
