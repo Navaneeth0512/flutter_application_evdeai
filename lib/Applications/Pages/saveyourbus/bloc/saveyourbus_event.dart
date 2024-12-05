@@ -1,9 +1,6 @@
-import 'package:equatable/equatable.dart';
+part of 'saveyourbus_bloc.dart';
 
-abstract class SaveYourBusEvent extends Equatable {
-  @override
-  List<Object> get props => [];
-}
+abstract class SaveYourBusEvent {}
 
 class SaveBusDataEvent extends SaveYourBusEvent {
   final String busRegisterNumber;
@@ -17,8 +14,4 @@ class SaveBusDataEvent extends SaveYourBusEvent {
     required this.startDestination,
     required this.endDestination,
   });
-
-  @override
-  List<Object> get props =>
-      [busRegisterNumber, busName, startDestination, endDestination];
 }

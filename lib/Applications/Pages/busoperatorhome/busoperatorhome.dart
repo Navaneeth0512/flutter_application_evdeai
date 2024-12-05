@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_evdeai/Applications/Pages/busdetails/bus_details.dart';
+import 'package:flutter_application_evdeai/Applications/Pages/saveyourbus/saveyourbuspage.dart';
 import 'package:flutter_application_evdeai/Applications/Widgets/custom_elevated_button.dart';
 
 class MyApp extends StatelessWidget {
@@ -21,8 +22,8 @@ class BusOperatorHome extends StatelessWidget {
         leading: const Padding(
           padding: EdgeInsets.all(8.0),
           child: CircleAvatar(
-            backgroundImage:
-                AssetImage('assets/logo.jpg'), // Replace with actual image URL
+            backgroundImage: AssetImage(
+                'assets/images/logo.jpg'), // Replace with actual image URL
           ),
         ),
         title: const Column(
@@ -76,7 +77,7 @@ class BusOperatorHome extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => BusDetails(),
+                        builder: (context) => SaveYourBusPage(),
                       ),
                     );
                   },
