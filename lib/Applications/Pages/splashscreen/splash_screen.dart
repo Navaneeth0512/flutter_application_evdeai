@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_evdeai/Applications/Pages/busdriverloginpage/busdriverloginpage.dart';
+import 'package:flutter_application_evdeai/Applications/core/colors.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -11,28 +11,19 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
-    super.initState();
-
-    // Delay for 3 seconds before navigating to the next page
-    Future.delayed(const Duration(seconds: 3), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => BusDriverLoginPageWrapper()),
-      );
+    Future.delayed(const Duration(seconds: 2), () async {
+      await Navigator.pushNamedAndRemoveUntil(
+          context, '/buslogin', (route) => false);
     });
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Optional: Change to match your theme
+      backgroundColor: backGroundColor,
       body: Center(
-        child: Image.asset(
-          'assets/images/logo.jpg', // Path to your logo
-          width: 500, // Adjust size if needed
-          height: 500,
-          fit: BoxFit.contain,
-        ),
+        child: Image.asset('assets/images/logo.jpg'),
       ),
     );
   }
